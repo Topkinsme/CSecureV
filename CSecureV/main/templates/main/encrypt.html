@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Form</title>
+    <!-- Google Fonts for cyberpunk style -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styles */
+        body {
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #9b4dff, #00bcd4); /* Neon Purple to Neon Blue Gradient */
+            color: #9b4dff; /* Neon Purple */
+            text-align: center;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Container to center the form */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* Style for the form box */
+        .form-box {
+            background: #181818; /* Slightly darker background */
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 20px rgba(155, 77, 255, 0.3); /* Neon Purple Glow */
+            width: 100%;
+            max-width: 450px;
+            border: 2px solid #9b4dff; /* Neon Purple */
+        }
+
+        /* Style for the form heading */
+        .form-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+            color: #ffeb3b; /* Neon Yellow */
+            font-size: 36px;
+            text-transform: uppercase;
+        }
+
+        /* Style for the input groups */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #ffeb3b; /* Neon Yellow */
+        }
+
+        .input-group input,
+        .input-group select {
+            font-family: 'Orbitron', sans-serif;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #9b4dff; /* Neon Purple */
+            border-radius: 15px;
+            font-size: 16px;
+            background-color: #2a2a2a;
+            color: #9b4dff; /* Neon Purple */
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #ffeb3b; /* Neon Yellow */
+            background-color: #333;
+        }
+
+        /* Style for the submit button */
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #9b4dff; /* Neon Purple */
+            color: black;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-family: 'Orbitron', sans-serif; /* Apply Orbitron font here */
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ffeb3b; /* Neon Yellow */
+            color: #000;
+        }
+
+        button:active {
+            background-color: #ffd54f; /* Light Yellow */
+        }
+
+        button:focus {
+            box-shadow: 0 0 15px rgba(255, 235, 59, 0.5); /* Neon Yellow Glow */
+        }
+
+        /* Additional quirky button hover effects */
+        .form-box:hover {
+            box-shadow: 0px 15px 30px rgba(155, 77, 255, 0.3); /* Neon Purple */
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2>File Upload</h2>
+            <form action="#" method="POST">
+                <!-- File Upload Field -->
+                <div class="input-group">
+                    <label for="file-upload">Upload File:</label>
+                    <input type="file" id="file-upload" name="file-upload" required>
+                </div>
+
+                <!-- Receiver Username Dropdown with Searchable Feature (Using datalist) -->
+                <div class="input-group">
+                    <label for="receiver-username">Receiver Username:</label>
+                    <input list="usernames" id="receiver-username" name="receiver-username" placeholder="Type or select a username" required>
+                    <datalist id="usernames">
+                        <option value="user1">
+                        <option value="user2">
+                        <option value="user3">
+                        <option value="user4">
+                    </datalist>
+                </div>
+
+                <!-- Pin Field -->
+                <div class="input-group">
+                    <label for="pin">Pin:</label>
+                    <input type="text" id="pin" name="pin" required>
+                </div>
+
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
