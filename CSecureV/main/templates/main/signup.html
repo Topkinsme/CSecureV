@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Form</title>
+    <!-- Google Fonts for cyberpunk style -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Reset default styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styles */
+        body {
+            font-family: 'Orbitron', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #0f0f0f;
+            color: #00ff99; /* Neon green */
+            text-align: center;
+        }
+
+        /* Container to center the form */
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        /* Style for the form box */
+        .form-box {
+            background: #1a1a1a;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0px 10px 20px rgba(0, 255, 153, 0.3);
+            width: 100%;
+            max-width: 400px;
+            border: 2px solid #00ff99; /* Neon green */
+        }
+
+        /* Style for the form heading */
+        .form-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            margin-bottom: 20px;
+            color: #00ff99;
+            font-size: 36px;
+            text-transform: uppercase;
+        }
+
+        /* Style for the input groups */
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #00ff99; /* Neon green */
+        }
+
+        .input-group input {
+            font-family: 'Orbitron', sans-serif;
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #00ff99;
+            border-radius: 15px;
+            font-size: 16px;
+            background-color: #2a2a2a;
+            color: #00ff99;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #ff007f; /* Neon pink */
+            background-color: #333;
+        }
+
+        /* Style for the submit button */
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #00ff99;
+            color: black;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-family: 'Orbitron', sans-serif; /* Apply Orbitron font here */
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #ff007f; /* Neon pink */
+            color: #fff;
+        }
+
+        button:active {
+            background-color: #ff4d77; /* Darker neon pink */
+        }
+
+        button:focus {
+            box-shadow: 0 0 15px rgba(0, 255, 153, 0.5);
+        }
+
+        /* Additional quirky button hover effects */
+        .form-box:hover {
+            box-shadow: 0px 15px 30px rgba(0, 255, 153, 0.3);
+            transform: scale(1.05);
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2>SIGN UP</h2>
+            <form id="signup-form" action="#" method="POST">
+                <div class="input-group">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <div class="input-group">
+                    <label for="confirm-password">Confirm Password:</label>
+                    <input type="password" id="confirm-password" name="confirm-password" required>
+                </div>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
