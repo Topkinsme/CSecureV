@@ -118,14 +118,26 @@
             box-shadow: 0px 20px 40px rgba(0, 188, 212, 0.3);
             transform: scale(1.08); /* Slightly larger on hover */
         }
-
+        .error {
+            background-color: #ff4d77; /* Neon pink */
+            color: #fff;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="form-box">
             <h2>LOG IN</h2>
+            {% if error %}
+            <div id="error-div" class="error">{{error}}</div>
+            {% endif %}
             <form action="#" method="POST">
+                {% csrf_token %}
                 <div class="input-group">
                     <label for="username">Username:</label>
                     <input type="text" id="username" name="username" required>
