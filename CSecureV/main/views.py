@@ -15,3 +15,9 @@ def main_page(request):
 
 def profile(request):
     return render(request,'main/profile.html')
+
+def decrypt(request):
+    return render(request,'main/encrypt.html')
+
+def encrypt(request):
+    return render(request,'main/decrypt.html')
