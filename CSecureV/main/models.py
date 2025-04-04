@@ -5,8 +5,7 @@ class User(models.Model):
     user_id=models.CharField(max_length=10)
     username=models.CharField(max_length=20)
     password = models.CharField(max_length=128)
-    public_key=models.CharField(max_length=128)
-    private_key=models.CharField(max_length=128)
+    private_key=models.TextField()
 
 
     def set_password(self, raw_password):

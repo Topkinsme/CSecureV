@@ -128,7 +128,8 @@
     <div class="container">
         <div class="form-box">
             <h2>File Upload</h2>
-            <form action="#" method="POST">
+            <form action="/encrypt" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
                 <!-- File Upload Field -->
                 <div class="input-group">
                     <label for="file-upload">Upload File:</label>
@@ -140,10 +141,9 @@
                     <label for="receiver-username">Receiver Username:</label>
                     <input list="usernames" id="receiver-username" name="receiver-username" placeholder="Type or select a username" required>
                     <datalist id="usernames">
-                        <option value="user1">
-                        <option value="user2">
-                        <option value="user3">
-                        <option value="user4">
+                        {% for uname in usernames %}
+                            <option value="{{ uname }}">
+                        {% endfor %}
                     </datalist>
                 </div>
 
