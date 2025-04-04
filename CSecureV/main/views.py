@@ -32,6 +32,11 @@ def login(request):
 
     return render(request,'main/login.html',context=context)
 
+def logout(request):
+    request.session.clear()
+    request.session.flush()
+    return redirect('/')
+
 def signup(request):
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -49,13 +54,23 @@ def signup(request):
     return render(request, 'main/signup.html')
 
 def main_page(request):
+    if 'user' not in request.session:
+        return redirect('login')
     return render(request,'main/main_page.html')
 
 def profile(request):
-    return render(request,'main/profile.html')
+    context={}
+    if 'user' not in request.session:
+        return redirect('login')
+    context['username']=User.objects.filter(user_id=request.session['user'])[0].username
+    return render(request,'main/profile.html',context=context)
 
 def decrypt(request):
+    if 'user' not in request.session:
+        return redirect('login')
     return render(request,'main/encrypt.html')
 
 def encrypt(request):
+    if 'user' not in request.session:
+        return redirect('login')
     return render(request,'main/decrypt.html')
