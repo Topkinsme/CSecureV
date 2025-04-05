@@ -97,7 +97,14 @@ def decrypt(request):
 
         keytext=receiver.private_key.encode('utf-8')
         receiver_private_key = rsa.PrivateKey.load_pkcs1(keytext)
-        pin=rsa.decrypt(pin_bytes, receiver_private_key)
+        try:
+            pin=rsa.decrypt(pin_bytes, receiver_private_key)
+        except:
+            error="You are not the intended receipient of this file."
+            return render(request, 'main/decrypt.html',{
+                'usernames': User.objects.values_list('username', flat=True),
+                'error':error
+            })
 
         fernet = Fernet(pin)
         if file_data.startswith("b'") and file_data.endswith("'"):
