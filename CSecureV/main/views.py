@@ -1,8 +1,10 @@
 from django.http import HttpResponse
 from django.shortcuts import render,redirect
+from django.contrib import messages
 from .models import User
 import random
 import rsa
+import hashlib
 from cryptography.fernet import Fernet
 def home(request):
     return render(request, 'main/landing_page.html')
@@ -84,7 +86,7 @@ def decrypt(request):
         print("request.FILES:", request.FILES)
         file_data = uploaded_file.read().decode('utf-8')
 
-        pin,file_data=file_data.split('λλλλλ')
+        received_hash,pin,file_data=file_data.split('λλλλλ')
         import ast
         pin_bytes = ast.literal_eval(pin)
         #print(pin,file_data)
@@ -104,19 +106,28 @@ def decrypt(request):
             file_data = file_data.encode('utf-8')
 
         decrypted_message=fernet.decrypt(file_data).decode()
+        compute_hash= hashlib.sha256(decrypted_message.encode('utf-8')).hexdigest()
+
+        if compute_hash==received_hash:
+            response = HttpResponse(decrypted_message, content_type='application/octet-stream')
+            response['Content-Disposition'] = f'attachment; filename="decrypted_file.csv"'
+            return response
+        else:
+            error="The file appears to be tampered or corrupted. Decryption aborted."
+            return render(request, 'main/decrypt.html',{
+                'usernames': User.objects.values_list('username', flat=True),
+                'error':"The file appears to be tampered or corrupted. Decryption aborted."
+            })
         #encrypted_message = fernet.encrypt()
 
         #encrypted_fernet_key = rsa.encrypt(pin, receiver_public_key)
 
         #msg=f"{encrypted_fernet_key}λλλλλ{encrypted_message}"
 
-        response = HttpResponse(decrypted_message, content_type='application/octet-stream')
-        response['Content-Disposition'] = f'attachment; filename="decrypted_file.csv"'
-        return response
 
 
     return render(request, 'main/decrypt.html',{
-        'usernames': User.objects.values_list('username', flat=True)
+        'usernames': User.objects.values_list('username', flat=True),
     })
 
 def encrypt(request):
@@ -138,12 +149,13 @@ def encrypt(request):
         #print(keytext,repr(keytext),repr(receiver.private_key),end="\n\n")
         receiver_public_key = rsa.PublicKey.load_pkcs1(keytext)
         file_data = uploaded_file.read().decode('utf-8')
-
+        hash = hashlib.sha256(file_data.encode('utf-8')).hexdigest()
         encrypted_message = fernet.encrypt(file_data.encode('utf-8'))
 
         encrypted_fernet_key = rsa.encrypt(pin, receiver_public_key)
 
-        msg=f"{encrypted_fernet_key}λλλλλ{encrypted_message}"
+
+        msg=f"{hash}λλλλλ{encrypted_fernet_key}λλλλλ{encrypted_message}"
 
         response = HttpResponse(msg, content_type='application/octet-stream')
         response['Content-Disposition'] = f'attachment; filename="encrypted_file.enc"'
