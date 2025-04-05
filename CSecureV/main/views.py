@@ -2,9 +2,8 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect
 from .models import User
 import random
-from Crypto.PublicKey import RSA
-from Crypto.Cipher import AES, PKCS1_OAEP
-from Crypto.Util.Padding import pad
+import rsa
+from cryptography.fernet import Fernet
 def home(request):
     return render(request, 'main/landing_page.html')
 
@@ -55,7 +54,9 @@ def signup(request):
         
         user = User(user_id=gen_id(),username=username, password=None)
         user.set_password(password)
-        user.private_key=RSA.generate(2048).exportKey().decode('utf-8')  #RSA.importKey('-----BEGIN RSA PRIVATE KEY--- ....')
+        (public_key, private_key) = rsa.newkeys(2048)
+        user.private_key=private_key.save_pkcs1().decode('utf-8')
+        user.public_key=public_key.save_pkcs1().decode('utf-8')
         user.save()
         return redirect('login')  
 
@@ -76,7 +77,47 @@ def profile(request):
 def decrypt(request):
     if 'user' not in request.session:
         return redirect('login')
-    return render(request,'main/encrypt.html')
+    if request.method == 'POST':
+        reciever_id = request.session.get('user')
+        sender_username = request.POST.get('sender-username')
+        uploaded_file = request.FILES.get('file-upload')
+        print("request.FILES:", request.FILES)
+        file_data = uploaded_file.read().decode('utf-8')
+
+        pin,file_data=file_data.split('λλλλλ')
+        import ast
+        pin_bytes = ast.literal_eval(pin)
+        #print(pin,file_data)
+        #print(type(pin_bytes))
+
+        sender = User.objects.get(username=sender_username)
+        receiver = User.objects.get(user_id=reciever_id)
+
+        keytext=receiver.private_key.encode('utf-8')
+        receiver_private_key = rsa.PrivateKey.load_pkcs1(keytext)
+        pin=rsa.decrypt(pin_bytes, receiver_private_key)
+
+        fernet = Fernet(pin)
+        if file_data.startswith("b'") and file_data.endswith("'"):
+            file_data = ast.literal_eval(file_data)  # Convert to real bytes
+        else:
+            file_data = file_data.encode('utf-8')
+
+        decrypted_message=fernet.decrypt(file_data).decode()
+        #encrypted_message = fernet.encrypt()
+
+        #encrypted_fernet_key = rsa.encrypt(pin, receiver_public_key)
+
+        #msg=f"{encrypted_fernet_key}λλλλλ{encrypted_message}"
+
+        response = HttpResponse(decrypted_message, content_type='application/octet-stream')
+        response['Content-Disposition'] = f'attachment; filename="decrypted_file.csv"'
+        return response
+
+
+    return render(request, 'main/decrypt.html',{
+        'usernames': User.objects.values_list('username', flat=True)
+    })
 
 def encrypt(request):
     if 'user' not in request.session:
@@ -84,28 +125,27 @@ def encrypt(request):
     if request.method == 'POST':
         sender_id = request.session.get('user')
         receiver_username = request.POST.get('receiver-username')
-        pin = request.POST.get('pin')
         uploaded_file = request.FILES.get('file-upload')
+
+        pin=Fernet.generate_key()
+        fernet = Fernet(pin)
 
         #get all keys
         sender = User.objects.get(user_id=sender_id)
         receiver = User.objects.get(username=receiver_username)
-        sender_private_key = RSA.importKey(sender.private_key.encode('utf-8'))
-        receiver_public_key = RSA.importKey(receiver.private_key.encode('utf-8')).publickey()
-        file_data = uploaded_file.read()
 
-        cipher_rsa_sender = PKCS1_OAEP.new(sender_private_key)
-        encrypted_by_sender = cipher_rsa_sender.encrypt(file_data)
+        keytext=receiver.public_key.encode('utf-8')
+        #print(keytext,repr(keytext),repr(receiver.private_key),end="\n\n")
+        receiver_public_key = rsa.PublicKey.load_pkcs1(keytext)
+        file_data = uploaded_file.read().decode('utf-8')
 
-        cipher_rsa_receiver = PKCS1_OAEP.new(receiver_public_key)
-        encrypted_by_receiver = cipher_rsa_receiver.encrypt(encrypted_by_sender)
+        encrypted_message = fernet.encrypt(file_data.encode('utf-8'))
 
-        aes_key = pin.encode().ljust(32, b'\0')
-        cipher_aes = AES.new(aes_key, AES.MODE_CBC)
-        padded_data = pad(encrypted_by_receiver, AES.block_size)
-        final_encrypted_data = cipher_aes.encrypt(padded_data)
+        encrypted_fernet_key = rsa.encrypt(pin, receiver_public_key)
 
-        response = HttpResponse(final_encrypted_data, content_type='application/octet-stream')
+        msg=f"{encrypted_fernet_key}λλλλλ{encrypted_message}"
+
+        response = HttpResponse(msg, content_type='application/octet-stream')
         response['Content-Disposition'] = f'attachment; filename="encrypted_file.enc"'
         return response
 
